@@ -1,23 +1,31 @@
 package Model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.net.InetAddress;
 
 public class User {
-    private String ipAddress;
+	private final InetAddress ipAddress;
     private String nickname;
+    private Integer port ; 
+    
+    //Integer TAILLE_MAX = 10; 
+    
+    public User (String nickname, InetAddress ipAddress, Integer port){
 
-    private HashMap<String,ArrayList<Messages>> history;
+        this.setNickname(nickname);
+        this.setPort(port);
+        this.ipAddress= ipAddress;
+        
+    }
+    
+    private Integer getPort() {
+    	return port;
+    }
+	private void setPort(Integer port) {
+		this.port = port ;
+	}
 
-    public User (String nickname, String ipAddress){
 
-        this.nickname = nickname;
-        this.setHistory(new HashMap<String,ArrayList<Messages>>());
-
-        this.ipAddress = ipAddress;
-}
-
-    public String getIpAddress() {
+	public InetAddress getIpAddress() {
         return ipAddress;
     }
 
@@ -28,11 +36,5 @@ public class User {
         this.nickname = nickname;
     }
 
-	public HashMap<String,ArrayList<Messages>> getHistory() {
-		return history;
-	}
-
-	public void setHistory(HashMap<String,ArrayList<Messages>> hashMap) {
-		this.history = hashMap;
-	}
+   
 }

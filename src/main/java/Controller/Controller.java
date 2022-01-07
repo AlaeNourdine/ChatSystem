@@ -2,14 +2,14 @@ package Controller;
 
 import java.io.*;
 import java.util.Scanner;
+import java.awt.color.*;
 
 public class Controller {
 
 	public boolean NicknameCheck(String nickname) {
 		
-	
-		
-		return false;
+
+	return false;
 	}
 	
 	

@@ -31,23 +31,23 @@ public class Messages implements Serializable{
 
     public String msgtoString() {
         String msg = "";
-        msg += ("Destinataire::" + this.getDestinataire() + "\n") ;
-        msg += ("Emetteur::" + this.getEmetteur()+ "\n") ;
-        msg += ("Type::"+ this.type+ "\n");
-        msg += ("Date::" + this.horodateToString() + "\n") ;
-        msg += ("Message::" + this.getMsg() + "\n" );
+        msg += ("Destinataire :" + this.getDestinataire() + "\n") ;
+        msg += ("Emetteur :" + this.getEmetteur()+ "\n") ;
+        msg += ("Type :"+ this.type+ "\n");
+        msg += ("Date :" + this.horodateToString() + "\n") ;
+        msg += ("Message :" + this.getMsg() + "\n" );
         return msg ;
     }
     
     public static Messages stringToMessageHorodated(String s) {
         String[] mots = s.split("\n");
-        User destinataire = User.stringToUser(mots[0].split("::")[1]);
-        User emetteur = User.stringToUser(mots[1].split("::")[1]);
-        int type = Integer.parseInt(mots[2].split("::")[1]);
+        User destinataire = User.stringToUser(mots[0].split(" :")[1]);
+        User emetteur = User.stringToUser(mots[1].split(" :")[1]);
+        int type = Integer.parseInt(mots[2].split(":")[1]);
         String contenu = "";
         for(int i=4; i< mots.length; i++) {
-            if(mots[i].startsWith("Message::")) {
-                mots[i]=mots[i].split("::")[1];
+            if(mots[i].startsWith("Message :")) {
+                mots[i]=mots[i].split(" :")[1];
             }
             contenu += mots[i]+"\n";
         }

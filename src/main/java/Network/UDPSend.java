@@ -26,7 +26,6 @@ public class UDPSend {
             //retrieves byte array
             byte[] sendBuf = byteStream.toByteArray();
             DatagramPacket packet = new DatagramPacket(sendBuf, sendBuf.length, address, DesPort);
-            int byteCount = packet.getLength();
             _socket.send(packet);
             os.close();
         }

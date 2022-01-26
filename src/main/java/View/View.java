@@ -41,11 +41,11 @@ public class View extends JFrame {
 		JTextField pseudo = new JTextField();
 		pseudo.setText("Pseudo");
 		pseudo.setColumns(10);
-		pseudo.setBounds(200, 80, 160, 50);
+		pseudo.setBounds(188, 82, 160, 30);
 		contentPane.add(pseudo);
 		
 		JButton btnConnexion = new JButton("Connexion");
-		btnConnexion.setBounds(360, 90, 160, 30);
+		btnConnexion.setBounds(356, 82, 160, 30);
 		contentPane.add(btnConnexion);
 		
 	}

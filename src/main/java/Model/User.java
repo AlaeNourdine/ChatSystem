@@ -5,16 +5,22 @@ import java.net.UnknownHostException;
 
 public class User {
 	private final InetAddress ipAddress;
+	private final String id;
     private String nickname;
     private Integer port ; 
+    
+    Integer TAILLE_MAX = 8;
     
  
     
     public User (String nickname, InetAddress ipAddress, Integer port){
-
         this.setNickname(nickname);
         this.setPort(port);
         this.ipAddress= ipAddress;
+        String aux=ipAddress.getHostName() ;
+        if (aux.length()> TAILLE_MAX) 
+        	aux = aux.substring(0, TAILLE_MAX);
+        this.id = aux;
     }
         
     private Integer getPort() {
@@ -24,7 +30,10 @@ public class User {
 		this.port = port ;
 	}
 
-
+	public String getId() {
+		return id ;
+	}
+	
 	public InetAddress getIpAddress() {
         return ipAddress;
     }

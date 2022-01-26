@@ -100,4 +100,8 @@ public class ActifUsers {
             }
             return true;
         }
+        
+        public ArrayList<User> getActifUsers(){
+            return this.actifUsersList;
+        }
 }

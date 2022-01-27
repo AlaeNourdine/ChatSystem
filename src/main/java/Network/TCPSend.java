@@ -1,11 +1,15 @@
 package Network;
 
+import View.View;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 public class TCPSend {
 	
@@ -14,11 +18,12 @@ public class TCPSend {
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		
-		
+		OutputStream outputStream = socket.getOutputStream();
+		ObjectOutputStream out = new ObjectOutputStream(outputStream);
 		socket = new Socket("localhost", 4567);
 		PrintWriter output = new PrintWriter(socket.getOutputStream(),true);
 		
-		ServerConnection serverConnection = new ServerConnection(socket);
+		ServerConnection serverConnection = new ServerConnection(socket); 
 		serverConnection.start();
 		
 		System.out.println("Enter nickname");
@@ -34,6 +39,9 @@ public class TCPSend {
 				query=s.nextLine();
 			}
 		}
+		
+		
+		new View(out) ;
 	}
 	public static void sendMessage(String formatedMsg, InetAddress destinationIP) {
 		int port = 5000;

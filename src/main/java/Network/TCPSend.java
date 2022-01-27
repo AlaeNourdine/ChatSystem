@@ -1,79 +1,60 @@
 package Network;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
 
+public class TCPSend {
+	
+	private static Socket socket;
+	private static String nickname;
 
-public class TCPSend extends Thread {
-    private final File fileToSend;    
-    private Socket connectionSocket;
-    private BufferedOutputStream outToClient;
-    private final int port;
-    private final String ipServer;
-    
-    public TCPSend(File fileSend,int p,String ipAddress){
-        super();
-       fileToSend=fileSend;
-       port=p;
-       ipServer=ipAddress;
-       connectionSocket = null;
-       outToClient = null;
-       
-    }
+	public static void main(String[] args) throws UnknownHostException, IOException {
+		
+		
+		socket = new Socket("localhost", 4567);
+		PrintWriter output = new PrintWriter(socket.getOutputStream(),true);
+		
+		ServerConnection serverConnection = new ServerConnection(socket);
+		serverConnection.start();
+		
+		System.out.println("Enter nickname");
+		//On a utilise la solution proposee car le scanner ne se ferme jamais
+		try (Scanner s = new Scanner(System.in)) {
+			nickname = s.nextLine();
+			output.println(nickname);
 
-   @Override
-   public void run() {
-
-        while (true) {
-          
-            try {
-                
-                System.out.println("----File ready to send:" +fileToSend.getName());
-                this.connectionSocket = new Socket(ipServer,port);
-                
-                this.outToClient = new BufferedOutputStream(this.connectionSocket.getOutputStream());
-            } catch (IOException ex) {
-                // Do exception handling
-            }
-
-            if (outToClient != null) {
-                File myFile = this.fileToSend;
-                if (myFile.exists()){
-                System.out.println("----File exists: "+fileToSend.getName());
-                }
-                else{
-                    System.out.println("------------\n ERROR File does not exists anymore \n ------------");
-                    System.exit(1);
-                }
-                byte[] mybytearray = new byte[(int) myFile.length()];
-
-                FileInputStream FIS = null;
-
-                try {
-                    FIS = new FileInputStream(myFile);
-                } catch (FileNotFoundException ex) {
-                    // Do exception handling
-                }
-                BufferedInputStream BIS = new BufferedInputStream(FIS);
-
-                try {
-                    BIS.read(mybytearray, 0, mybytearray.length);
-                    outToClient.write(mybytearray, 0, mybytearray.length);
-                    outToClient.flush();
-                    outToClient.close();
-                    connectionSocket.close();
-                    System.out.println("----File sended: " +fileToSend.getName());
-                    System.out.println("----Thread TCP Send Closed");
-
-                    // File sent, exit the main method
-                    return;
-                } catch (IOException ex) {
-                    // Do exception handling
-                }
-            }
-        }
-    }
-    
-   
-    
-}
+			
+			String query=s.nextLine();
+			while(query!=null) {
+				output.println(query);
+				query=s.nextLine();
+			}
+		}
+	}
+	public static void sendMessage(String formatedMsg, InetAddress destinationIP) {
+		int port = 5000;
+		PrintWriter output;
+		try {
+				
+			Socket clientSocket = new Socket(destinationIP, port);
+			output = new PrintWriter(clientSocket.getOutputStream());
+				
+			output.println(formatedMsg);
+			output.flush() ;
+			output.close();
+			clientSocket.close();
+				
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
+	}		
+	
+	
+}	

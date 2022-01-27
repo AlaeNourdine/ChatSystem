@@ -1,72 +1,55 @@
- package Network;
+package Network;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
-public class TCPReceive extends Thread {
-    
-    private final int serverPort ;
-    private final String fileOutput;
-    private ServerSocket serverSocket;
-    private  Socket connexionSocket;
-    
-    public TCPReceive( int port, String fileReceived) throws IOException{
-       super();
-        serverPort=port;
-        fileOutput=fileReceived;
-        serverSocket = null;
-        connexionSocket=null;
-    }
-    
-    @Override
-    public  void run() {
-    	System.out.println("----file ready to be received: "+fileOutput);  
-    	byte[] aByte = new byte[1];
-        	int bytesRead;
+public class TCPReceive {
 
-        	InputStream IS = null;
+	private static ServerSocket ssocket;
+	private static Socket clientsocket;
+	private static int count=0;
+	private static ArrayList<ServerThread> threadslist ;
 
-        	try {
-        		serverSocket = new ServerSocket(serverPort);
-        		connexionSocket = serverSocket.accept();
-                                
+	
+	public static void main(String[] args) throws IOException {
 
-        		IS = connexionSocket.getInputStream();
-            
-        	} catch (IOException ex) {
-            // Do exception handling
-        	}
+		threadslist = new ArrayList<>();
+		ssocket = new ServerSocket(4567);
+		
+		
+		while(true) {
+			System.out.println("Waiting for connection...");
+			clientsocket = ssocket.accept();
+			count++;
+			System.out.println("Connected to client nÂ° "+count);
+			ServerThread serverconn = new ServerThread(clientsocket,count);
+			threadslist.add(serverconn);
+			serverconn.start();
 
-        ByteArrayOutputStream BAOS = new ByteArrayOutputStream();
 
-        if (IS != null) {
+		}
+	}
+	
 
-            FileOutputStream FOS = null;
-            BufferedOutputStream BOS = null;
-            try {
-                FOS = new FileOutputStream( fileOutput );
-                BOS = new BufferedOutputStream(FOS);
-                bytesRead = IS.read(aByte, 0, aByte.length);
+	public static ArrayList<ServerThread> getThreadslist() {
+		return threadslist;
+	}
 
-                do {
-                        BAOS.write(aByte);
-                        bytesRead = IS.read(aByte);
-                } while (bytesRead != -1);
 
-                BOS.write(BAOS.toByteArray());
-                BOS.flush();
-                BOS.close();
-                serverSocket.close();
-                System.out.println("----File received: "+fileOutput);
-                System.out.println("----Thread TCP Receive closed");
-                //Envoyer un signal pour le NI pour lui dire qu'on a bien recu le fichier
-                //=> ecrire sur la fenêtre File received & => envoyer l'information à l'emetteur? (plus dur)
-            } catch (IOException ex) {
-                // Do exception handling
-            }
-        }
-    }
-    
-    
+	public static void setThreadslist(ArrayList<ServerThread> threadslist) {
+		TCPReceive.threadslist = threadslist;
+	}
+	
+	boolean isAvailable = true;	
+	boolean online = true ; 
+	
+	public boolean getAvailable() {
+		return this.isAvailable ; 
+	}
+	
+	public void setOnline(boolean statut) {
+		this.online = statut ; 
+	}
 }

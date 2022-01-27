@@ -111,7 +111,7 @@ import Model.Messages;
 /** 
  * Classe representant la page principale. 
  */
-public class View {
+public class Clavardage {
 	
 	
 	private static final long serialVersionUID = 7128287592232261943L;
@@ -119,73 +119,57 @@ public class View {
 	private ObjectOutputStream out ;
 	private String ipAddress ;
 	private JLabel lblNewLabel_1 ;
-	private JPanel viewPanel ;
-	private static JFrame viewFrame ; 
+	private JPanel clavardagePanel ;
+	private static JFrame clavardageFrame ; 
 	
-	public View(String username) throws IOException  {
-		View.nickname = username ;
+	public Clavardage(String username)  {
+		Clavardage.nickname = username ;
 
-		viewFrame = new JFrame(nickname) ;
-		viewFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		viewFrame.setSize(600, 400);
-		viewFrame.setLocationRelativeTo(null);
+		clavardageFrame = new JFrame(nickname) ;
+		clavardageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		clavardageFrame.setSize(600, 400);
+		clavardageFrame.setLocationRelativeTo(null);
 		
-		JButton btnConnexion = new JButton("Connexion");
-		btnConnexion.setBounds(356, 82, 160, 30);
-		viewFrame.add(btnConnexion);
-	
-		btnConnexion.addActionListener(
-				new ActionListener() {
-					public void actionPerformed(ActionEvent MyActionEvent) {
-					//	ControllerChat.connexion(nickname);
-						viewFrame.setVisible(false);
-						Clavardage clavardage = new Clavardage(nickname);
-						
-					}
-					
-				}
-				);
-		viewFrame.getRootPane().setDefaultButton(btnConnexion);
+		
 		
 		JTextField pseudo = new JTextField();
 		pseudo.setText("Pseudo");
 		pseudo.setColumns(10);
 		pseudo.setBounds(188, 82, 160, 30);
-		viewFrame.add(pseudo);
+		clavardageFrame.add(pseudo);
 		
 		JLabel lblNewLabel = new JLabel("Bienvenue !");
 		lblNewLabel.setBounds(225, 20, 160, 50);
-		viewFrame.add(lblNewLabel);
+		clavardageFrame.add(lblNewLabel);
 		
 		
 		JLabel lblNewLabel_1 = new JLabel("Choisis ton pseudo");
 		lblNewLabel_1.setBounds(200, 40, 160, 50);
-		viewFrame.add(lblNewLabel_1);
-		viewFrame.setVisible(true);
+		clavardageFrame.add(lblNewLabel_1);
 		
+
 		
-	}
+		clavardageFrame.setVisible(true);
+
+
+	}	
 	
+
 		
 		//this.out = out ;
 		
 		//viewFrame = new JFrame ("View Window");
 		//viewPanel = new JPanel(new GridLayout (10,10)) ;
 
-
-
 		
-		
-
 
 	public void actionPerformed(ActionEvent event) {
 		nickname = lblNewLabel_1.getText();
 		System.out.println("Login Username : " + nickname);
 	}
 	
-	public static void main (String[] args) throws IOException {
-		new View(nickname) ;
-		
+	public static void main (String[] args) {
+		new Clavardage(nickname) ;
 	}
 	
 }

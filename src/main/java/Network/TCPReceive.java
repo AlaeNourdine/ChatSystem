@@ -23,7 +23,7 @@ public class TCPReceive {
 			System.out.println("Waiting for connection...");
 			clientsocket = ssocket.accept();
 			count++;
-			System.out.println("Connected to client nÂ° "+count);
+			System.out.println("Connected to client n° "+count);
 			ServerThread serverconn = new ServerThread(clientsocket,count);
 			threadslist.add(serverconn);
 			serverconn.start();

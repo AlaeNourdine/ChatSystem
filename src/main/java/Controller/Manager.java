@@ -58,6 +58,7 @@ public class Manager {
 		res = res && validLengthUsername(usernameWanted) ; 
 		res = res && validCharUsername(usernameWanted) ; 
 		res = res && networkManager.usernameAvailable(usernameWanted) ; 
+		res = res && validBDDusername(usernameWanted);
 		if(res) {
 			username = usernameWanted;
 		}
@@ -65,6 +66,12 @@ public class Manager {
 	}
 	
 	
+	private static boolean validBDDusername(String usernameWanted) {
+		InetAddress IP = db.getIP(usernameWanted) ;
+		return (IP==null || IP.equals(NetworkManager.getMyIP()));
+	
+	}
+
 	// Get attribute username
 	public static String getUsername() {
 		return username;

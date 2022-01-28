@@ -139,7 +139,7 @@ public class View {
 					public void actionPerformed(ActionEvent MyActionEvent) {
 					//	ControllerChat.connexion(nickname);
 						viewFrame.setVisible(false);
-						Clavardage clavardage = new Clavardage(nickname);
+						new Clavardage(nickname);
 						
 					}
 					

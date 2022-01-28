@@ -66,13 +66,9 @@ public class ServerThread extends Thread{
 					output.println("request unknown");				
 					resp = input.readLine();
 
-				
-
 				}
 
 			}
-
-
 
 		}catch (IOException e){e.printStackTrace();}
 

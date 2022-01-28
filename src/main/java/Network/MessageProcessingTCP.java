@@ -1,6 +1,7 @@
 package Network;
 
 import java.io.*;
+import java.net.InetAddress;
 //import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,7 +33,7 @@ public class MessageProcessingTCP implements Runnable {
 	}
 
 	// Message processing depending on message format
-	/*public void dataFilter(String msg) {
+	public void dataFilter(String msg) {
 		String[] token = msg.split("/-/");
 		NetworkManager.MessageType type = NetworkManager.MessageType.valueOf(token[0].toUpperCase());
 		String username = token[1];
@@ -67,7 +68,7 @@ public class MessageProcessingTCP implements Runnable {
 		default:
 			break;
 		}
-	}*/
+	}
 
 
 	// Forbid the use of a username because it is not available 

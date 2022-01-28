@@ -54,7 +54,7 @@ public class NetworkManager {
 		}
 	}
 
-	public InetAddress getMyIP() {
+	public static InetAddress getMyIP() {
 		return myIP ;
 	}
 	

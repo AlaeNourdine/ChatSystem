@@ -4,9 +4,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class User {
-	private final InetAddress ipAddress;
+	private static InetAddress ipAddress;
 	private final String id;
-    private String nickname;
+    private static String nickname;
     private Integer port ; 
     
     Integer TAILLE_MAX = 8;
@@ -34,11 +34,11 @@ public class User {
 		return id ;
 	}
 	
-	public InetAddress getIpAddress() {
+	public static InetAddress getIpAddress() {
         return ipAddress;
     }
 
-    public String getNickname() {
+    public static String getNickname() {
         return nickname;
     }
     public void setNickname(String nickname) {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class ActifUsers {
 	
-	private static ArrayList<User> actifUsersList;
+	private ArrayList<User> actifUsersList;
 	
 	public ActifUsers() {
 		this.actifUsersList = new ArrayList<>();
@@ -85,14 +85,14 @@ public class ActifUsers {
     public void showActifUsers() {
         System.out.println ("Utilisateurs actifs : ");
         StringBuilder User = new StringBuilder();
-        for(User elem: actifUsersList)
+        for(User elem: this.actifUsersList)
         {
             System.out.println (elem.toString());
             User.append(elem).append("\n");
         }
     }
-        public static Boolean checkNicknameUnicity(String nickname) {
-            for(User elem: actifUsersList)
+        public Boolean checkNicknameUnicity(String nickname) {
+            for(User elem: this.actifUsersList)
             {
                 if (nickname.equals( elem.getNickname() ) ) {
                     return false ;

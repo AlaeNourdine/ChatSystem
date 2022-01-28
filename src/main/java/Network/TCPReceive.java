@@ -1,11 +1,10 @@
 package Network;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class TCPReceive {
+public class TCPReceive extends Thread{
 
 	private static ServerSocket ssocket;
 	private static Socket clientsocket;
@@ -13,23 +12,30 @@ public class TCPReceive {
 	private static ArrayList<ServerThread> threadslist ;
 
 	
-	public static void main(String[] args) throws IOException {
-
+	public static void main (String [] args) {
+		
+		int port = 4567 ;
 		threadslist = new ArrayList<>();
-		ssocket = new ServerSocket(4567);
 		
-		
-		while(true) {
-			System.out.println("Waiting for connection...");
-			clientsocket = ssocket.accept();
-			count++;
-			System.out.println("Connected to client n° "+count);
-			ServerThread serverconn = new ServerThread(clientsocket,count);
-			threadslist.add(serverconn);
-			serverconn.start();
-
-
+		try {
+			ssocket = new ServerSocket(port);
+			
+			
+			while(true) {
+				System.out.println("Waiting for connection...");
+				clientsocket = ssocket.accept();
+				count++;
+				System.out.println("Connected to client n° "+count);
+				ServerThread serverconn = new ServerThread(clientsocket,count);
+				threadslist.add(serverconn);
+				serverconn.start();
+			}
+			
 		}
+		catch (Exception e){
+			System.out.println(e);
+		}
+	
 	}
 	
 

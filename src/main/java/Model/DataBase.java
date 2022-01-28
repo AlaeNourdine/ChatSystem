@@ -56,18 +56,9 @@ public class DataBase {
      * <br> On installe le driver et on établit la connection.
      */
     public DataBase(ControllerChat chatapp) {
-        //this.chatapp = chatapp;
-        //this.login = (String) chatapp.getConfigJSON().get("BaseDeDonnesLogin");
-        //this.mdp = (String) chatapp.getConfigJSON().get("BaseDeDonneesMDP");
-        //this.DB_URL = (String) chatapp.getConfigJSON().get("BaseDeDonnesURL");
-        try {
-            //Besoin d'installer le driver JDBC entre java IDE et le system DBMS pour faire un pont entre les deux
-            Class.forName("com.mysql.cj.jdbc.Driver"); //Chargement du pilote MySQL
-            System.out.println("Driver Installe");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Echec installation Driver");
-        }
+        //Besoin d'installer le driver JDBC entre java IDE et le system DBMS pour faire un pont entre les deux
+		 //Chargement du pilote MySQL
+		System.out.println("Driver Installe");
         try {
             //Etablir une connexion , forme : (url, "myLogin", "myPassword");            
         	System.out.println(this.DB_URL);

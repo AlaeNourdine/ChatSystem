@@ -8,8 +8,6 @@ import java.sql.ResultSet ;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 
-import Controller.ControllerChat;
-
 public class BDD {
 	
     /* URL pour acceder à la BDD */
@@ -28,7 +26,6 @@ public class BDD {
     /* Mdp pour se connecter à la BDD */
     private String mdp = "Or4Xaigh";
 
-    private ControllerChat chatapp;
 
     /* Singleton */
     private static final BDD instance = null;
@@ -41,24 +38,18 @@ public class BDD {
 		// Load the driver class file 
 		try {
 			//Class.forName("com.mysql.cj.jdbc.Driver") ; 
-			Class.forName("com.mysql.cj.jdbc.Driver");
+			Class.forName("org.sqlite.JDBC") ; 
 		} 
 		catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Echec installation Driver");
+			System.out.println("Error while loading the driver class file" + e) ; 
 		}
 		
 		try {
-			//Etablir une connexion , forme : (url, "myLogin", "myPassword");            
-        	System.out.println(this.DB_URL);
-            System.out.println(this.mdp);
-            System.out.println(this.login);
-            this.connection = DriverManager.getConnection(this.DB_URL,this.login,this.mdp); //Ouverture de la connexion
-            System.out.println("Connexion Etablie");
-            
+			// Make a database connection
+			this.connection = DriverManager.getConnection("jdbc:sqlite:localDB.db");
+			
 			// Create a statement object
 			this.statement = this.connection.createStatement() ; 
-			
 			
 			// Execute the statement 			
 			String query = "CREATE TABLE IF NOT EXISTS UsernameToIP " +
@@ -68,11 +59,10 @@ public class BDD {
 			           " lastAccess VARCHAR(255) not NULL) ;" ;  
 
 			this.statement.executeUpdate(query) ;
+		} 
 		
-		
-		} catch (SQLException e) {
-        e.printStackTrace();
-        System.out.println("Echec d'etablissement de la connexion");
+		catch (SQLException e) {
+			System.out.println(e);
 		}
 	}
 	

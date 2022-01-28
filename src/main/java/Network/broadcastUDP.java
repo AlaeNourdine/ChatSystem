@@ -39,6 +39,7 @@ public class broadcastUDP {
     
     public static InetAddress getCurrentIp() {
         try {
+        	// on recupere toutes les addresses de broadcast
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface
                     .getNetworkInterfaces();
             while (networkInterfaces.hasMoreElements()) {

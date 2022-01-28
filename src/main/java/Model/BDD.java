@@ -46,7 +46,7 @@ public class BDD {
 		
 		try {
 			// Make a database connection
-			this.connection = DriverManager.getConnection("jdbc:sqlite:localDB.db");
+			this.connection = DriverManager.getConnection(this.DB_URL, this.login, this.mdp);
 			
 			// Create a statement object
 			this.statement = this.connection.createStatement() ; 
@@ -55,7 +55,7 @@ public class BDD {
 			String query = "CREATE TABLE IF NOT EXISTS UsernameToIP " +
 			           "(username VARCHAR(255) not NULL, " +
 			           " ip VARCHAR(255) not NULL PRIMARY KEY," +
-			           " isConnected BOOLEAN not NULL CHECK (isConnected IN (0,1))," +
+			           " isOnline BOOLEAN not NULL CHECK (isOnline IN (0,1))," +
 			           " lastAccess VARCHAR(255) not NULL) ;" ;  
 
 			this.statement.executeUpdate(query) ;
@@ -77,7 +77,7 @@ public class BDD {
 			IPString = IPString.substring(1);
 		}
 		
-		String query = "REPLACE INTO UsernameToIP(Username, IP, isConnected, lastAccess) VALUES ('" + username + "', '" + IPString + "', 1, '') ;" ;
+		String query = "REPLACE INTO UsernameToIP(Username, IP, isOnline, lastAccess) VALUES ('" + username + "', '" + IPString + "', 1, '') ;" ;
 		
 		try {
 			// Execute the statement 
@@ -96,7 +96,7 @@ public class BDD {
 	// Function to set the connected state -> disconnected 
 	public void userDisconnected(String username) {
 		
-		String query = "UPDATE UsernameToIP SET isConnected = 0 WHERE Username = '" + username + "' ;" ; 
+		String query = "UPDATE UsernameToIP SET isOnline = 0 WHERE Username = '" + username + "' ;" ; 
 		
 		try {
 			// Execute the statement 

@@ -13,9 +13,9 @@ public class BDD2 {
 	// Attributes 
 	Connection connection ; 
 	Statement statement ;
-	String addrDb = "jdbc:mysql://srv-bdens.insa-toulouse.fr:3306/tp_servlet_008?";
-	String login = "tp_servlet_008" ;
-	String password = "ees7Lozu" ;
+	String addrDb = "jdbc:mysql://srv-bdens.insa-toulouse.fr:3306/tp_servlet_020?";
+	String login = "tp_servlet_020" ;
+	String password = "Or4Xaigh" ;
 	Session history ; 
 	
 	// Constructor 

@@ -37,8 +37,8 @@ public class BDD {
 	public BDD() {		
 		// Load the driver class file 
 		try {
-			//Class.forName("com.mysql.cj.jdbc.Driver") ; 
-			Class.forName("org.sqlite.JDBC") ; 
+			Class.forName("com.mysql.cj.jdbc.Driver") ; 
+			//Class.forName("org.sqlite.JDBC") ; 
 		} 
 		catch (ClassNotFoundException e) {
 			System.out.println("Error while loading the driver class file" + e) ; 

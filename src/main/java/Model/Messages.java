@@ -2,6 +2,9 @@ package Model;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import Network.NetworkManager.MessageType;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -15,10 +18,9 @@ public class Messages implements Serializable{
 	private String msg;
     private Date horodatage;
     private User emetteur;
-    private int type ;
+    private Type type ;
 
-    public Messages ( String msg, User destinataire,User emetteur,int type) {
-        this.setDestinataire(destinataire) ;
+    public Messages ( String msg, User emetteur,Type type) {
         this.setEmetteur(emetteur) ;
         this.setMsg(msg) ;
         this.setHorodatation(new Date());
@@ -29,6 +31,20 @@ public class Messages implements Serializable{
         this.setHorodatation(date);
     }
 
+    
+	public static enum Type {
+		BROADCAST_NICKNAME,
+		CONNEXION,
+		DECONNEXION,
+		GET_ALL_USERS,
+		USERNAME_EDIT, 
+		MESSAGE
+	}
+    
+	public static String msgForme(String msg,String username, Type type) {
+		return (type + "/-/" + username+ "/-/" + msg);
+	}
+	
     public String msgtoString() {
         String msg = "";
         msg += ("Destinataire :" + this.getDestinataire() + "\n") ;
@@ -51,7 +67,7 @@ public class Messages implements Serializable{
             }
             contenu += mots[i]+"\n";
         }
-        return new Messages(contenu, destinataire, emetteur, type);
+        return new Messages(contenu, emetteur ,  null);
     }
     
     public String horodateToString() {
@@ -100,11 +116,11 @@ public class Messages implements Serializable{
 		
 	}
 	
-    public int getType() {
+    public Type getType() {
         return type;
     }
     
-    public void setType(int type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

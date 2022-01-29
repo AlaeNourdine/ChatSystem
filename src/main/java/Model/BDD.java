@@ -31,7 +31,7 @@ public class BDD {
     private static final BDD instance = null;
 
 	
-	Statement statement ;
+	static Statement statement ;
 	
 	// Constructor 
 	public BDD() {		
@@ -71,7 +71,7 @@ public class BDD {
 	//                                       Add or update a user in the database                                   //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void addUser(String username, InetAddress IP) {
+	public static void addUser(String username, InetAddress IP) {
 		String IPString = IP.toString();
 		if (IPString.charAt(0) == ('/')) {
 			IPString = IPString.substring(1);
@@ -79,12 +79,12 @@ public class BDD {
 		
 		String query = "REPLACE INTO UsernameToIP(Username, IP, isOnline, lastAccess) VALUES ('" + username + "', '" + IPString + "', 1, '') ;" ;
 		
+		// Execute the statement 
 		try {
-			// Execute the statement 
-			this.statement.executeUpdate(query) ; 
-		} 
-		catch (SQLException e) {
-			System.out.println(e);
+			statement.executeUpdate(query) ;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class BDD {
 	// Function to set the connected state -> disconnected 
 	public void userDisconnected(String username) {
 		
-		String query = "UPDATE UsernameToIP SET isOnline = 0 WHERE Username = '" + username + "' ;" ; 
+		String query = "UPDATE UsernameToIP SET isConnected = 0 WHERE Username = '" + username + "' ;" ; 
 		
 		try {
 			// Execute the statement 

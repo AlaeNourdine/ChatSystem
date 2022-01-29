@@ -12,7 +12,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.*;
 
 import Model.*;
 import Controller.*;
@@ -72,6 +74,9 @@ public class View {
 								msg= new JLabel ("Pseudo invalide. Veuillez en choisir un autre.");
 								JOptionPane.showMessageDialog(viewFrame, msg);
 							}else {
+								InetAddress nomAddressIp = InetAddress.getLocalHost();
+								
+								BDD.addUser(nom, nomAddressIp );
 								viewFrame.setVisible(false);
 								General general = new General (nickname);
 							}

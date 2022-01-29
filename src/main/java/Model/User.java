@@ -22,7 +22,7 @@ public class User {
         	aux = aux.substring(0, TAILLE_MAX);
         this.id = aux;
     }
-        
+    
     private Integer getPort() {
     	return port;
     }

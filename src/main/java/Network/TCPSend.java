@@ -48,6 +48,8 @@ public class TCPSend {
 		
 
 	}
+	
+	
 	public static void sendMessage(String formatedMsg, InetAddress destinationIP) {
 		int port = 5000;
 		PrintWriter output;

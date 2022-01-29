@@ -19,8 +19,9 @@ public class General {
 	private JPanel broadcast = new JPanel (new FlowLayout(FlowLayout.LEFT)) ;
 	private JPanel header= new JPanel (new FlowLayout(FlowLayout.CENTER)) ;
 	
-	private JButton btnDisconect = new JButton ("Déconnexion");
+	private JButton btnDisconect = new JButton ("Dï¿½connexion");
 	private JButton btnChangeNickname = new JButton ("Changer pseudo"); 
+	private JButton btnOnline = new JButton ("Utilisateurs en ligne");
 	
 	JScrollPane scrollPane ;
 	
@@ -34,7 +35,7 @@ public class General {
 	public static String username;
 	
 	//Constructeur
-	public General (String nickname) throws IOException {
+	public General (String nickname) {
 		username = nickname;
 		
 		generalFrame = new JFrame ("General");
@@ -63,25 +64,34 @@ public class General {
 		generalFrame.getRootPane().setDefaultButton(btnChangeNickname);
 		
 		
-		btnDisconect.setBounds(356, 82, 160, 30);
-		header.add(btnDisconect);
+
 		btnDisconect.setBounds(356, 82, 160, 30);
 		header.add(btnDisconect);
 		btnDisconect.addActionListener(
 				new ActionListener() {
 					public void actionPerformed(ActionEvent MyActionEvent) {
 						generalFrame.setVisible(false);
-						try {
 							View view = new View(username);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						
 					}
 					
 				}
 				);
 		generalFrame.getRootPane().setDefaultButton(btnDisconect);
+		
+		
+		
+		btnOnline.setBounds(356, 82, 160, 30);
+		actifUsers.add(btnOnline);
+		btnOnline.addActionListener(
+				new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+					
+					}
+				}
+				);
+		
+		
 		
 		
 		for (int i=0; i<usersNbre; i++) {
@@ -102,7 +112,7 @@ public class General {
 
 	}
 	
-	public static void main (String[] args) throws IOException{
+	public static void main (String[] args) {
 		new General(username) ;
 	}
 }

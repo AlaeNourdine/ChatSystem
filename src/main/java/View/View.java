@@ -34,7 +34,9 @@ public class View {
 	private static JFrame viewFrame ; 
 	private JLabel msg;
 	
-	public View(String nickname) throws IOException  {
+	private final JTextField pseudo = new JTextField();
+	
+	public View(final String nickname)  {
 		View.username = nickname ;
 
 		viewFrame = new JFrame(nickname) ;
@@ -52,8 +54,7 @@ public class View {
 		viewFrame.add(lblNewLabel_1);
 		viewFrame.setVisible(true);
 		
-		JTextField pseudo = new JTextField();
-		pseudo.setText("Pseudo");
+		final JTextField pseudo = new JTextField();
 		pseudo.setColumns(10);
 		pseudo.setBounds(188, 100, 160, 30);
 		viewFrame.add(pseudo);
@@ -66,29 +67,19 @@ public class View {
 		btnConnexion.addActionListener(
 				new ActionListener() {
 					public void actionPerformed(ActionEvent MyActionEvent) {
-						String nom = pseudo.getText(); //On récupère le pseudo choisi par l'utilisateur
-						boolean used;
-						try {
-							used = Controller.validUsername(nom);
+						String nom = pseudo.getText(); //On rï¿½cupï¿½re le pseudo choisi par l'utilisateur
+						boolean used = Controller.validUsername(nom);
 							if (! used) {
 								msg= new JLabel ("Pseudo invalide. Veuillez en choisir un autre.");
 								JOptionPane.showMessageDialog(viewFrame, msg);
 							}else {
-								InetAddress nomAddressIp = InetAddress.getLocalHost();
-								
-								BDD.addUser(nom, nomAddressIp );
+								Controller.connection(nom);
 								viewFrame.setVisible(false);
 								General general = new General (nickname);
 							}
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-
-						
 					}
-					
 				}
+				
 				);
 		viewFrame.getRootPane().setDefaultButton(btnConnexion);
 		
@@ -103,7 +94,7 @@ public class View {
 		System.out.println("Login Username : " + username);
 	}
 	
-	public static void main (String[] args) throws IOException {
+	public static void main (String[] args) {
 		new View(username) ;
 		
 	}

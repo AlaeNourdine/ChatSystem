@@ -4,20 +4,21 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import Model.*;
+import Controller.*;
+
 public class UDPReceive extends Thread{
-	// Attributes 
 	int port;
 	int length;
 	boolean connected ; 
 	
-	// Constructor
 	public UDPReceive(int port, int length) {
 		this.port = port;
 		this.length = length;
 		this.connected = true ; 
 	}
 	
-	// Setter 
+
 	public void setOnline(boolean statut) {
 		this.connected = statut ; 
 	}
@@ -26,51 +27,47 @@ public class UDPReceive extends Thread{
 	public void dataProcessing(String data) {
 		String[] token = data.split("/-/");
 		
-		NetworkManager.MessageType type = NetworkManager.MessageType.valueOf(token[0].toUpperCase());
+		Messages.Type type = Messages.Type.valueOf(token[2].toUpperCase());
 		String username = token[1];
-		String content ;
+		String content = token[0];
 		
 		switch (type) {
 		
-		case USERNAME_BRDCST:
-			// Someone asks if a username is available 
+		case BROADCAST_NICKNAME:
 			try {
 				content = token[2];
 				InetAddress IP = InetAddress.getByName(content); 
-				NetworkManager.usernameRequest(username,IP);				
+				ControllerNetwork.usernameRequest(username,IP);				
 			}
 			catch(Exception e) {
 				System.out.println(e);
 			}
 			break;
 			
-		case USERNAME_CONNECTED:
-			// A new user is connected
+		case CONNEXION:
 			try {
 				content = token[2];
 				InetAddress IP = InetAddress.getByName(content); 
-				NetworkManager.newUserConnected(username,IP);				
+				ControllerNetwork.newUserConnected(username,IP);				
 			}
 			catch(Exception e) {
 				System.out.println(e);
 			}
 			break;
 			
-		case USERNAME_DISCONNECT:
-			// A user is disconnected
-			NetworkManager.userDisconnected(username);
+		case DECONNEXION:
+			ControllerNetwork.userDisconnected(username);
 			break;
 			
-		case GET_USERNAMES:
-			// A user asks for our username
-			NetworkManager.sendUsername(username);
+		case GET_ALL_USERS:
+			ControllerNetwork.sendNickname(username);
 			break;
 			
-		case USERNAME_CHANGED: 
+		case USERNAME_EDIT: 
 			try {
 				content = token[2];
 				InetAddress IP = InetAddress.getByName(content); 
-				NetworkManager.updateUsername(IP, username) ; 
+				ControllerNetwork.updateUsername(IP, username) ; 
 			}
 			catch(Exception e) {
 				System.out.println(e);

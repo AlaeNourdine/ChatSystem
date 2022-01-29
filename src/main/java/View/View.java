@@ -69,7 +69,7 @@ public class View {
 						String nom = pseudo.getText(); //On récupère le pseudo choisi par l'utilisateur
 						boolean used;
 						try {
-							used = Manager.validUsername(nom);
+							used = Controller.validUsername(nom);
 							if (! used) {
 								msg= new JLabel ("Pseudo invalide. Veuillez en choisir un autre.");
 								JOptionPane.showMessageDialog(viewFrame, msg);

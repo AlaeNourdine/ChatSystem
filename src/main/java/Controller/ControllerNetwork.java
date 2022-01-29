@@ -52,6 +52,14 @@ public class ControllerNetwork {
 		}
 	}
 	
+	public static InetAddress getIP() {
+		return ipAddress ;
+	}
+	
+	public String getStringIP() {
+		return iptoString;
+	}
+	
 	public void runServers() {
 		new Thread(this.serverTCP).start();
 		new Thread(this.serverUDP).start();
@@ -86,6 +94,14 @@ public class ControllerNetwork {
 	public static void notifyUsernameUnavailable() {
 		isAvailable = false;
 	}
+	
+	public static void sendNickname(String destinataireNom) {
+		if (!destinataireNom.equals(User.getNickname())) {
+			String msg = Messages.msgForme(iptoString, User.getNickname(), Messages.Type.GET_ALL_USERS) ;
+			InetAddress destinationIP = User.getIpAddress();
+			TCPSend.sendMessage(msg, destinationIP);
+		}
+	}
 
 	public void notifyConnected(String username) throws IOException {
 		String msg = Messages.msgForme( iptoString, username,  Messages.Type.CONNEXION) ;
@@ -109,7 +125,7 @@ public class ControllerNetwork {
 	
 	
 	public static void usernameRequest(String username, InetAddress destinationIP) {
-		Manager.usernameRequest(username, destinationIP);
+		Controller.usernameRequest(username, destinationIP);
 	}
 
 
@@ -120,15 +136,15 @@ public class ControllerNetwork {
 
 
 	public static void newUserConnected(String username, InetAddress IP) {
-		Manager.newUserConnected(username, IP);
+		Controller.newUserConnected(username, IP);
 	}
 
 	public static void updateUsername(InetAddress IP, String newUsername) {
-		Manager.updateUsername(IP, newUsername) ;
+		Controller.updateUsername(IP, newUsername) ;
 	}
 	
 	public static void userDisconnected(String username) {
-		Manager.userDisconnected(username);
+		Controller.userDisconnected(username);
 	}
 
 	
@@ -137,16 +153,20 @@ public class ControllerNetwork {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		String formattedDate = date.format(format);
 		
-		String IPSender = Manager.getIP(user).toString() ;
+		String IPSender = Controller.getIP(user).toString() ;
 		if (IPSender.charAt(0) == ('/')) {
 			IPSender = IPSender.substring(1);
 		}
-		Manager.addMessageToHistory(IPSender, iptoString, message, formattedDate);
+		Controller.addMessageToHistory(IPSender, iptoString, message, formattedDate);
 	}
 
 	public void disconnection(String username) throws IOException {
 		notifyDisconnected(username);
 		serverUDP.setOnline(false) ;
 		serverTCP.setOnline(false) ;
+	}
+	
+	public static void main (String [] args) {
+		new Thread(new UDPReceive(5001, 50000)).start();
 	}
 }

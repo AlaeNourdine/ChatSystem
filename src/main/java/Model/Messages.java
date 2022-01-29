@@ -3,8 +3,6 @@ package Model;
 import java.io.Serializable;
 import java.util.Date;
 
-import Network.NetworkManager.MessageType;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 

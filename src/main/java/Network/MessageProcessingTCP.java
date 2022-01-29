@@ -1,5 +1,9 @@
 package Network;
 
+import Controller.*;
+import Model.*;
+
+
 import java.io.*;
 import java.net.InetAddress;
 //import java.net.InetAddress;
@@ -32,27 +36,23 @@ public class MessageProcessingTCP implements Runnable {
 		return this.message;
 	}
 
-	// Message processing depending on message format
 	public void dataFilter(String msg) {
 		String[] token = msg.split("/-/");
-		NetworkManager.MessageType type = NetworkManager.MessageType.valueOf(token[0].toUpperCase());
+		Messages.Type type = Messages.Type.valueOf(token[2].toUpperCase());
 		String username = token[1];
-		String content;
+		String payload = token[0];
 
-		// TCP server only receives username availability related messages and normal messages
 		switch(type) {
 
-		case USERNAME_BRDCST:
-			// The username we want to use is already taken 
-			NetworkManager.notifyUsernameUnavailable();
+		case BROADCAST_NICKNAME:
+			ControllerNetwork.notifyUsernameUnavailable();
 			break;
 
-		case GET_USERNAMES:
-			// We received a response when we asked someone for their username
+		case GET_ALL_USERS:
 			try {
-				content = token[2];
-				InetAddress IP = InetAddress.getByName(content); 
-				NetworkManager.newUserConnected(username, IP);
+				payload = token[0];
+				InetAddress IP = InetAddress.getByName(payload); 
+				ControllerNetwork.newUserConnected(username, IP);
 			}
 			catch(Exception e) {
 				System.out.println(e);
@@ -60,9 +60,8 @@ public class MessageProcessingTCP implements Runnable {
 			break;
 
 		case MESSAGE:
-			// we received a new message, we notify networkmanager
-			content = token[2];
-			NetworkManager.notifyNewMessage(content, username);
+			payload = token[0];
+			ControllerNetwork.notifyNewMessage(payload, username);
 			break;
 
 		default:
@@ -71,17 +70,13 @@ public class MessageProcessingTCP implements Runnable {
 	}
 
 
-	// Forbid the use of a username because it is not available 
 	public void forbidUsername() {
-		// Notify TCP server that this username is already used
 		this.serverTCP.isAvailable = false ;
-		// Reset our isAvailable boolean 
 		this.isAvailable = true ; 
 	}
 
 
 	public void processMessage() {
-		//System.out.println(this.message) ; 
 	}
 
 
@@ -92,9 +87,7 @@ public class MessageProcessingTCP implements Runnable {
 			String msg ;
 			msg = input.readLine();
 
-			//dataFilter(msg) ; 
 
-			// Message processing depending on the availability
 			if (!this.isAvailable) {
 				forbidUsername() ; 
 			} 

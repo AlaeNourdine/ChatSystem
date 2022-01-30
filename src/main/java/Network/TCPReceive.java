@@ -1,61 +1,51 @@
 package Network;
 
+import Controller.Controller;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class TCPReceive extends Thread{
 
-	private static ServerSocket ssocket;
-	private static Socket clientsocket;
-	private static int count=0;
-	private static ArrayList<ServerThread> threadslist ;
+	private Controller app;
+    byte[] array = new byte[100000000];
+	private static boolean ouvert;
+	private static Socket Csocket;
 
-	
-	public static void main (String [] args) {
+	//Constructor
+	public TCPReceive(Controller app) {
+		this.app=app;
+		setOuvert(true);
+
+	}
 		
-		int port = 4567 ;
-		threadslist = new ArrayList<>();
+	//Threads ecoutant les demandes 
+	public void run() {
 		
-		try {
-			ssocket = new ServerSocket(port);
-			
-			
-			while(true) {
-				System.out.println("Waiting for connection...");
-				clientsocket = ssocket.accept();
-				count++;
-				System.out.println("Connected to client n° "+count);
-				ServerThread serverconn = new ServerThread(clientsocket,count);
-				threadslist.add(serverconn);
-				serverconn.start();
-			}
-			
+		 ServerSocket server;
+	        try {
+	            server = new ServerSocket(2000); 
+	            //System.out.println("listening on port 2000 ready to have conversation");
+	            while(ouvert) { 
+	                Csocket = server.accept(); 
+	                TCPSend chat = new TCPSend(app,Csocket);
+	                
+	            }
+	            //link.close();
+	        }
+	        catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    
+	    
+		//-------------------- GETTEURS & SETTEURS -----------------------------//
+
+	    public boolean isOuvert() {
+			return ouvert;
 		}
-		catch (Exception e){
-			System.out.println(e);
+
+		public static void setOuvert(boolean ouvert) {
+			TCPReceive.ouvert = ouvert;
 		}
-	
-	}
-	
 
-	public static ArrayList<ServerThread> getThreadslist() {
-		return threadslist;
 	}
-
-
-	public static void setThreadslist(ArrayList<ServerThread> threadslist) {
-		TCPReceive.threadslist = threadslist;
-	}
-	
-	boolean isAvailable = true;	
-	boolean online = true ; 
-	
-	public boolean getAvailable() {
-		return this.isAvailable ; 
-	}
-	
-	public void setOnline(boolean statut) {
-		this.online = statut ; 
-	}
-}

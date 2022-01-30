@@ -7,119 +7,114 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 
+/**
+ * Classe pour toutes les echanges tcp 
+ 
+ */
+
 public class Messages implements Serializable{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private User destinataire ;
-	private String msg;
-    private Date horodatage;
+	private String data;
+    private String time;
     private User emetteur;
-    private Type type ;
 
-    public Messages ( String msg, User emetteur,Type type) {
-        this.setEmetteur(emetteur) ;
-        this.setMsg(msg) ;
-        this.setHorodatation(new Date());
-        this.type = type;
-    }
-
-    public void setDate(Date date) {
-        this.setHorodatation(date);
-    }
-
+    //Differents constructeurs avec different nombre d'arguments
     
-	public static enum Type {
-		BROADCAST_NICKNAME,
-		CONNEXION,
-		DECONNEXION,
-		GET_ALL_USERS,
-		USERNAME_EDIT, 
-		MESSAGE
+	public Messages() {
 	}
-    
-	public static String msgForme(String msg,String username, Type type) {
-		return (type + "/-/" + username+ "/-/" + msg);
+
+	
+	public Messages(User from, User to, String msg) {
+		this.setEmetteur(from);
+		this.setDestinataire(to);
+		this.setData(msg);
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		this.setTime(dateFormat.format(new Date()));
 	}
 	
-    public String msgtoString() {
-        String msg = "";
-        msg += ("Destinataire :" + this.getDestinataire() + "\n") ;
-        msg += ("Emetteur :" + this.getEmetteur()+ "\n") ;
-        msg += ("Type :"+ this.type+ "\n");
-        msg += ("Date :" + this.horodateToString() + "\n") ;
-        msg += ("Message :" + this.getMsg() + "\n" );
-        return msg ;
-    }
-    
-    public static Messages stringToMessageHorodated(String s) {
-        String[] mots = s.split("\n");
-        User destinataire = User.stringToUser(mots[0].split(" :")[1]);
-        User emetteur = User.stringToUser(mots[1].split(" :")[1]);
-        int type = Integer.parseInt(mots[2].split(":")[1]);
-        String contenu = "";
-        for(int i=4; i< mots.length; i++) {
-            if(mots[i].startsWith("Message :")) {
-                mots[i]=mots[i].split(" :")[1];
-            }
-            contenu += mots[i]+"\n";
-        }
-        return new Messages(contenu, emetteur ,  null);
-    }
-    
-    public String horodateToString() {
-        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        return format.format(this.getHorodatation());
-    }
-    
-    
-	private void setHorodatation(Date horodatage) {
-		this.horodatage = horodatage ;
-	}
-
-    public Date getHorodatation()
-    {
-        return this.horodatage;
-
-    }
-
-    
-	private void setMsg(String msg) {
-		this.msg = msg;
-		
+	public Messages(User from, User to, String msg, String date) {
+		this.setEmetteur(from);
+		this.setDestinataire(to);
+		this.setData(msg);
+		this.setTimeString(date);
 	}
 	
-	public String getMsg()
-    {
-        return this.msg;
+	public Messages(String msg) {
+		this.setData(msg);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		this.setTime(dateFormat.format(new Date()));
 
-    }
-	
-	
-	private void setEmetteur(User emetteur) {
-		this.emetteur = emetteur;
-		
 	}
 
-    public User getEmetteur() {
-        return emetteur;
-    }
-    
-    private User getDestinataire() {
-    	return this.destinataire;
-    }
-	private void setDestinataire(User destinataire) {
-		this.destinataire = destinataire ;
-		
+
+	public String toString() {
+		String smsg= "Sender: "+this.getEmetteur()+"\n"+"Receiver:  "+this.getDestinataire()+"\n"
+	+"Time:  "+ this.getTime()+"\n"+ "Data:  "+this.getData()+"\n";
+		return smsg;	
 	}
 	
-    public Type getType() {
-        return type;
-    }
-    
-    public void setType(Type type) {
-        this.type = type;
-    }
+
+	public static Messages toMessage(String smsg) {
+		String[] paramsg=smsg.split("\n");
+		User sender= User.toUser(paramsg[0].split(":")[1]);
+		User receiver= User.toUser(paramsg[1].split(":")[1]);
+		String[] fulldate=paramsg[2].split(":");
+		String date= (fulldate[1]+":"+fulldate[2]);
+ 		//typemsg type=toTypemsg(paramsg[3].split(":")[1]);
+		String [] tabdata=paramsg[3].split(":");
+		String data="";
+		for (int i=1;i<tabdata.length;i++) {
+			data+=tabdata[i];
+		}
+		return new Messages(sender,receiver,data,date);
+	
+	}
+	
+	
+	//-------------------- GETTEURS & SETTEURS -----------------------------//
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
+	public User getEmetteur() {
+		return emetteur;
+	}
+
+	public void setEmetteur(User sender) {
+		this.emetteur = sender;
+	}
+
+	public User getDestinataire() {
+		return destinataire;
+	}
+
+	public void setDestinataire(User receiver) {
+		this.destinataire = receiver;
+	}
+
+	public String getTime() {
+		return time;
+	}
+	
+	public String getTimeString() {
+		return time.toString();
+	}
+
+	public void setTime(String string) {
+		this.time = string;
+	}
+	
+	public void setTimeString (String date) {
+		this.time = date;
+	}
+
+
 
 }

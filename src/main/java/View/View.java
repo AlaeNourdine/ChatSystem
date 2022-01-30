@@ -3,7 +3,6 @@ package View;
 import java.net.URL;
 
 import Controller.Controller;
-import Controller.ControllerChat;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -73,9 +72,9 @@ public class View {
 								msg= new JLabel ("Pseudo invalide. Veuillez en choisir un autre.");
 								JOptionPane.showMessageDialog(viewFrame, msg);
 							}else {
-								Controller.connection(nom);
-								viewFrame.setVisible(false);
-								General general = new General (nickname);
+									Controller.connection(nom);
+									viewFrame.setVisible(false);
+									
 							}
 					}
 				}

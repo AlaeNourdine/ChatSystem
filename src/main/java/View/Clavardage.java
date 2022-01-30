@@ -3,8 +3,6 @@ package View;
 import java.net.URL;
 
 import Controller.Controller;
-import Controller.ControllerChat;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

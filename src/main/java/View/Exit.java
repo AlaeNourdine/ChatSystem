@@ -34,13 +34,7 @@ public class Exit {
 				new ActionListener() {
 					public void actionPerformed(ActionEvent MyActionEvent) {
 						exitFrame.setVisible(false);
-						try {
 							General general = new General (nickname);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
 					}
 					
 				}

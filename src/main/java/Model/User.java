@@ -1,74 +1,77 @@
 package Model;
 
+import Network.UDPReceive;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+
+/**
+ * Classe représentant un utilisateur de l'application
+ * ip : addresse ip de l'user (en string)
+ * pseudo : pseudo de l'user
+ * port : numéro de port de l'user
+ *
+ */
+
 public class User {
-	private static InetAddress ipAddress;
-	private final String id;
-    private static String nickname;
-    private Integer port ; 
+	
+	private String ipAddress;
+    private String nickname;
+    private int port ; 
     
-    Integer TAILLE_MAX = 8;
     
- 
+    public User (){
+    	
+    	this.setIP(UDPReceive.getCurrentIp().getHostAddress());
+		this.setPort(1234);
+	}
     
-    public User (String nickname, InetAddress ipAddress, Integer port){
-        this.setNickname(nickname);
-        this.setPort(port);
-        this.ipAddress= ipAddress;
-        String aux=ipAddress.getHostName() ;
-        if (aux.length()> TAILLE_MAX) 
-        	aux = aux.substring(0, TAILLE_MAX);
-        this.id = aux;
-    }
+    //Constructor
+    public User(String ipaddress, int port, String nickname) {
+		this.setIP(ipaddress);
+		this.setPort(port);
+		this.setNickname(nickname);
+	}
     
-    private Integer getPort() {
-    	return port;
-    }
-	private void setPort(Integer port) {
-		this.port = port ;
+    public String toString() {
+		return "_"+this.nickname+"_"+this.ipAddress+"_"+String.valueOf(this.port);
+	}
+    
+    public static User toUser(String s) {
+		String[] parametersuser=s.split("_");
+		//String validate= parametersuser[0];
+		String userpseudo = parametersuser[1];
+		String userip = parametersuser[2];
+		String userport = parametersuser[3];
+		User people= new User(userip, Integer.parseInt(userport), userpseudo);
+		return people;
+	}
+    
+	
+	//-------------------- GETTEURS & SETTEURS -----------------------------//
+
+	public String getIP() {
+		return ipAddress;
 	}
 
-	public String getId() {
-		return id ;
+	public void setIP(String address) {
+		this.ipAddress = address;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 	
-	public static InetAddress getIpAddress() {
-        return ipAddress;
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public static String getNickname() {
-        return nickname;
-    }
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-    
-    
-    public String UserToString(){
-        String str = "";
-        str+="nickname" + this.nickname + " - ";
-        str+="port " + (this.port).toString() + " - ";
-        str+="ipAddress " + (this.ipAddress).toString() + " - ";
-        return str;
-    }
-    
-    public static User stringToUser(String userstr) {
-        String nickname;
-        Integer port = 0;
-        String ip = "" ;
-        String mots[] = userstr.split(" ");
-        nickname=mots[1];
-        port=Integer.parseInt(mots[4]);
-        ip=mots[7];
-        User user = null;
-        try {
-            user = new User(nickname,InetAddress.getByName(ip.split("/")[1]), port);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return user;
-    }
+	public void setPort(int p) {
+		this.port = p;
+	}
 
 }

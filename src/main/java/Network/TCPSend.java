@@ -1,75 +1,108 @@
 package Network;
 
-import View.View;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import Controller.Controller;
+import Model.Messages;
+import Model.User;
 
 public class TCPSend {
 	
+	private Controller app;
+	private User them;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 	private static Socket socket;
-	private static String nickname;
 
-	public static void main(String[] args) throws UnknownHostException, IOException {
-		
-		socket = new Socket("localhost", 4567);
-		PrintWriter output = new PrintWriter(socket.getOutputStream(),true);
-		
-		
-		System.out.println("Enter nickname");
-		//On a utilise la solution proposee car le scanner ne se ferme jamais
-		try (Scanner s = new Scanner(System.in)) {
-			nickname = s.nextLine();
-			output.println(nickname);
-
-			
-			String query=s.nextLine();
-			while(query!=null) {
-				output.println(query);
-				query=s.nextLine();
-			}
-		}
-		OutputStream outputStream = socket.getOutputStream();
-		ObjectOutputStream out = new ObjectOutputStream(outputStream);
-		
-		InputStream inputStream = socket.getInputStream();
-		ObjectInputStream in = new ObjectInputStream(inputStream);
-		
-		ServerConnection serverConnection = new ServerConnection(socket); 
-		serverConnection.start();
-		
-
-	}
-	
-	
-	public static void sendMessage(String formatedMsg, InetAddress destinationIP) {
-		int port = 5000;
-		PrintWriter output;
-		try {
-				
-			Socket clientSocket = new Socket(destinationIP, port);
-			output = new PrintWriter(clientSocket.getOutputStream());
-				
-			output.println(formatedMsg);
-			output.flush() ;
-			output.close();
-			clientSocket.close();
-				
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+	//Constructor pour envoyer
+	public TCPSend (Controller app, Socket sock) {
+    	setApp(app);
+    	setSocket(sock);
+    	try {
+			setOut(new ObjectOutputStream(sock.getOutputStream()));
+			setIn(new ObjectInputStream(sock.getInputStream()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-			
-	}		
+    }
+	
+	//Constructor pour recevoir
+	 public TCPSend (Controller app, User user) {
+	    	setApp(app);
+	    	setThem(user);
+	    	try {
+				setSocket(new Socket(user.getIP(),2000));
+				setOut(new ObjectOutputStream(socket.getOutputStream()));
+				setIn(new ObjectInputStream(socket.getInputStream()));
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    }
+	 
+
+	public void SendMessage(String data) {
+		Messages msg = new Messages(getApp().getMe(),getThem(), data);
+		try {
+		    getOut().writeObject(msg.toString());
+		    getApp().getDb().addMessage(getThem().getIP(), msg);
+		    socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	//-------------------- GETTEURS & SETTEURS -----------------------------//
+	
+	public Controller getApp() {
+		return app;
+	}
+	
+	public void setApp(Controller app) {
+		this.app = app;
+	}
+	
+	public User getThem() {
+		return them;
+	}
+	
+	public void setThem(User them) {
+		this.them = them;
+	}
+	
+	public Socket getSocket() {
+		return socket;
+	}
+	
+	public void setSocket(Socket socket) {
+		this.socket = socket;
+	}
+	
+	public ObjectOutputStream getOut() {
+		return out;
+	}
+	
+	public void setOut(ObjectOutputStream out) {
+		this.out = out;
+	}
+	
+	public ObjectInputStream getIn() {
+		return in;
+	}
+	
+	public void setIn(ObjectInputStream in) {
+		this.in = in;
+	}
 	
 	
-}	
+	}
+

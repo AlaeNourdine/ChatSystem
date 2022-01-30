@@ -1,332 +1,171 @@
 package Model;
 
-import java.net.InetAddress;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.ResultSet ; 
-import java.sql.DriverManager;
 import java.util.ArrayList;
+
+import Controller.Controller;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+/**
+ * Classe representant la base de donnees stockant l'historique des conversations 
+ */
 
 public class BDD {
 	
-    /* URL pour acceder à la BDD */
-	//C'est une concatenation des éléments suivants : 
-	//jdbc:mysql : qui indique le protocole utilisé pour accéder à la BDD
-	//localhost::3306 : dans notre cas srv-bdens.insa-toulouse.fr:3306 , indique le nom de l'hôte qui héberge la bdd, ainsi que le port d'accès
-	//nom_de_la_bdd : dans notre cas tp_servlet_020 
+	private static Controller app;
+	
 	private String DB_URL = "jdbc:mysql://srv-bdens.insa-toulouse.fr:3306/tp_servlet_020?" ;
 
-    /* Connection avec la BDD */
     private Connection connection = null;
 
-    /* Login pour se connecter à la BDD */
     private String login = "tp_servlet_020";
 
-    /* Mdp pour se connecter à la BDD */
     private String mdp = "Or4Xaigh";
+    
+	//Constructor
+    public BDD(Controller app) {
+    	this.setApp(app);
+    	createNewDatabase(); 
+    	
+    }
+    
+    Statement statement;
+    
+  
+	public void createNewDatabase() {
+	   	try {
+	   		//Class.forName("org.sqlite.JDBC");
+	   		Class.forName("com.mysql.cj.jdbc.Driver") ; 
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
+	   	
+	   	try (Connection conn = DriverManager.getConnection(this.DB_URL, this.login, this.mdp)) {
+	   		if (conn != null) {
+	   			DatabaseMetaData meta = conn.getMetaData();
+	   			//System.out.println("The driver name is " + meta.getDriverName());
+	   			//System.out.println("A new database has been created.");
+	   		}
 
-
-    /* Singleton */
-    private static final BDD instance = null;
-
-	
-	static Statement statement ;
-	
-	// Constructor 
-	public BDD() {		
-		// Load the driver class file 
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver") ; 
-			//Class.forName("org.sqlite.JDBC") ; 
-		} 
-		catch (ClassNotFoundException e) {
-			System.out.println("Error while loading the driver class file" + e) ; 
-		}
-		
-		try {
-			// Make a database connection
-			this.connection = DriverManager.getConnection(this.DB_URL, this.login, this.mdp);
-			
-			// Create a statement object
-			this.statement = this.connection.createStatement() ; 
-			
-			// Execute the statement 			
-			String query = "CREATE TABLE IF NOT EXISTS UsernameToIP " +
-			           "(username VARCHAR(255) not NULL, " +
-			           " ip VARCHAR(255) not NULL PRIMARY KEY," +
-			           " isOnline BOOLEAN not NULL CHECK (isOnline IN (0,1))," +
-			           " lastAccess VARCHAR(255) not NULL) ;" ;  
-
-			this.statement.executeUpdate(query) ;
-		} 
-		
-		catch (SQLException e) {
-			System.out.println(e);
-		}
+	   	} catch (SQLException e) {	
+	   		System.out.println(e.getMessage());
+	   	}
 	}
 	
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                                       Add or update a user in the database                                   //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public static void addUser(String username, InetAddress IP) {
-		String IPString = IP.toString();
-		if (IPString.charAt(0) == ('/')) {
-			IPString = IPString.substring(1);
-		}
-		
-		String query = "REPLACE INTO UsernameToIP(Username, IP, isOnline, lastAccess) VALUES ('" + username + "', '" + IPString + "', 1, '') ;" ;
-		
-		// Execute the statement 
-		try {
-			statement.executeUpdate(query) ;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	/**
+	 * Connection to database	
+	 */
+	private Connection connect() {
+		Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(this.DB_URL, this.login, this.mdp);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return conn;
+ 	}	 
+	 
+	 
+	public void createTableConvo(String ip2) {
+        String sqlconvo= "CREATE TABLE IF NOT EXISTS `" +getNomTable(ip2)+"`(\n"
+                + "	time text NOT NULL, \n"
+        		+ " message text NOT NULL, \n"
+                + " sender integer NOT NULL"
+                + ");"; 
+        
+        try (Connection conn = DriverManager.getConnection(this.DB_URL, this.login, this.mdp);
+        		Statement stmt = conn.createStatement()) {
+        		stmt.execute(sqlconvo);
+        } catch (SQLException e) {
+         	System.out.println("erreur at createTableConvo\n");
+         	System.out.println(e.getMessage());
+        }
 	}
-	
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                                                     Setters                                                  //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	// Function to set the connected state -> disconnected 
-	public void userDisconnected(String username) {
-		
-		String query = "UPDATE UsernameToIP SET isConnected = 0 WHERE Username = '" + username + "' ;" ; 
-		
-		try {
-			// Execute the statement 
-			this.statement.executeUpdate(query) ; 
-		} 
-		catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	// Function to update the username 
-	public void updateUsername(InetAddress IP, String newUsername) {
-		String IPString = IP.toString();
-		if (IPString.charAt(0) == ('/')) {
-			IPString = IPString.substring(1);
-		}
-		String query = "UPDATE UsernameToIP SET Username = '" + newUsername + "' WHERE IP = '" + IPString + "' ;" ; 
-		
-		try {
-			// Execute the statement 
-			this.statement.executeUpdate(query) ; 
-		} 
-		catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	// Function to update the last access date 
-	public void updateLastAccess(InetAddress IP, String newDate) {
-		String IPString = IP.toString();
-		if (IPString.charAt(0) == ('/')) {
-			IPString = IPString.substring(1);
-		}
-		String query = "UPDATE UsernameToIP SET lastAccess = '" + newDate + "' WHERE IP = '" + IPString + "' ;" ; 
-		
-		try {
-			// Execute the statement 
-			this.statement.executeUpdate(query) ; 
-		} 
-		catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                                                     Getters                                                  //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	// Get the username according to the IP address
-	public String getUsername(InetAddress IP) {
-		String IPString = IP.toString();
-		if (IPString.charAt(0) == ('/')) {
-			IPString = IPString.substring(1);
-		}
-		String query = "SELECT UsernameToIP.Username FROM UsernameToIP WHERE IP = '" + IPString + "' ;";	
-		String username = "" ; 
-		try {
-			// Execute the statement 
-			ResultSet rs = this.statement.executeQuery(query) ; 
-			if (rs.next()) {
-				 username = rs.getString(1);
-			}
-			rs.close(); 
-		} 
-		catch (SQLException e) {
-			System.out.println(e);
-		}
-
-		return username ;	
-	}
-	
-	// Get the IP address according to the username
-	public InetAddress getIP(String username) {
-		String query = "SELECT UsernameToIP.IP FROM UsernameToIP WHERE Username = '" + username + "' ;";	
-		String IPString = "" ; 
-		InetAddress IP = null ; 
-		try {
-			// Execute the statement 
-			ResultSet rs = this.statement.executeQuery(query) ; 
-			
-			if (rs.next()) {
-				 IPString = rs.getString(1) ; 
-				 IP = InetAddress.getByName(IPString) ; 
-			}
-			rs.close(); 
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		return IP ; 
-	}
-	
-	// Get the last access according to the IP  
-	public String getLastAccess(InetAddress IP) {
-		String IPString = IP.toString();
-		if (IPString.charAt(0) == ('/')) {
-			IPString = IPString.substring(1);
-		}
-		String query = "SELECT UsernameToIP.lastAccess FROM UsernameToIP WHERE IP = '" + IPString + "' ;";	
-		String lastAccess = "" ; 
-		try {
-			// Execute the statement 
-			ResultSet rs = this.statement.executeQuery(query) ; 
-			if (rs.next()) {
-				 lastAccess = rs.getString(1);
-			}
-			rs.close(); 
-		} 
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return lastAccess ;	
-	}	
-	
-	
-	// Get all usernames of the database 
-	public ArrayList<String> getAllUsernames() {
-		String query = "SELECT UsernameToIP.Username FROM UsernameToIP ;";	
-		ArrayList<String> results = new ArrayList<String>() ; 
-		
-		try {
-			// Execute the statement 
-			ResultSet rs = this.statement.executeQuery(query) ;
-			
-			while(rs.next()) {
-				results.add(rs.getString(1));
-			}
-			rs.close(); 
-		} 
-		catch ( Exception e) {
-			System.out.println(e);
-		}
-		
-		return results ; 
-	}
-	
-	
-	// Get all connected usernames of the database 
-		public ArrayList<String> getConnectedUsernames() {String query = "SELECT UsernameToIP.Username FROM UsernameToIP WHERE isConnected=1;";	
-			ArrayList<String> results = new ArrayList<String>() ; 
-			
-			try {
-				// Execute the statement 
-				ResultSet rs = this.statement.executeQuery(query) ;
-				
-				while(rs.next()) {
-					results.add(rs.getString(1));
-				}
-				rs.close(); 
-			} 
-			catch ( Exception e) {
-				System.out.println(e);
-			}
-			
-			return results ; 
-		}
-	
-		
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                                                Delete an element                                             //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
-	
-	// Delete a user to the database according to the username 
-	public void deleteUserByName(String username) {
-		String query = "DELETE FROM UsernameToIP WHERE Username='" + username + "' ;" ;	
-		
-		try {
-			// Execute the statement 
-			this.statement.executeUpdate(query) ; 
-		} 
-		catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	// Delete a user to the database according to the IP address 
-	public void deleteUserByIP(InetAddress IP) {
-		String IPString = IP.toString();
-		if (IPString.charAt(0) == ('/')) {
-			IPString = IPString.substring(1);
-		}
-		String query = "DELETE FROM UsernameToIP WHERE IP='" + IPString + "' ;" ;		
-		
-		try {
-			// Execute the statement 
-			this.statement.executeUpdate(query) ; 
-		} 
-		catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                                                 Drop the database                                            //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
-	public void dropDatabase() {
-		String query = "DROP TABLE UsernameToIP ;" ;
-		
-		try {
-			// Execute the statement 
-			this.statement.executeUpdate(query) ;
-		} 
-		catch (SQLException e) {
-			System.out.println(e);
-		}
-	}
-	
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                                         Close the connection of database                                     //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	public void closeConnection() {
-		try {
-			this.connection.close() ;
-		} 
-		catch (SQLException e) {
-			System.out.println(e) ; 
-		}
-		
-	}	
 	
 
-	public static void main(String[] args) {
-		
+	public ArrayList<Messages> recupHistory(String ip2) {
+        ArrayList<Messages> historique = new ArrayList<Messages>();
+		String nomtable= getNomTable(ip2);
+//		String sql = "SELECT id, time, message, sender FROM `"+nomtable+"`";
+		String sql = "SELECT time, message, sender FROM `"+nomtable+"`";
+
+	    try (Connection conn = this.connect();
+			 Statement stmt  = conn.createStatement();
+	         ResultSet rs    = stmt.executeQuery(sql)){
+
+	    	// loop through the result set
+	    	while (rs.next()) {
+	    		Messages msg= new Messages();
+	    		msg.setData(rs.getString("message"));
+	    		msg.setTimeString(rs.getString("time"));
+	    		if (rs.getInt("sender")==0) {
+	    			msg.setEmetteur(getApp().getMe());
+		    		msg.setDestinataire(getApp().getActifUsers().getUserfromIP(ip2));
+	    		}
+	    		else {
+	    			msg.setEmetteur(getApp().getActifUsers().getUserfromIP(ip2));
+		    		msg.setDestinataire(getApp().getMe());
+	    		}
+	    		historique.add(msg);
+	         	}
+	        } catch (SQLException e) {
+	            System.out.println("error at recupHistory\n");
+	            System.out.println(e.getMessage());
+	        }
+		return historique;
+	}
+
+
+
+	public void addMessage(String ip2, Messages msg) {
+		String nomtable= getNomTable(ip2);
+		String sql = "INSERT INTO `"+nomtable+"`(time,message,sender) VALUES(?,?,?)";
+
+
+		try (Connection conn =  this.connect() ; PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//			pstmt.setString(1, "");
+			pstmt.setString(1, msg.getTimeString());
+	        pstmt.setString(2, msg.getData());
+	        // 0 -> j'ai envoye le message
+	        if (msg.getEmetteur().equals(getApp().getMe())) {
+	        	pstmt.setInt(3, 0);
+	        }
+	        // 1 -> j'ai recu le message
+	        else {
+	        	pstmt.setInt(3, 1);
+
+	        }
+	    	//System.out.println("on ajoute le msg");
+
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	    	System.out.println("error at addMessage\n");
+	    	System.out.println(e.getMessage());
+	    }
+	}
+
+	public String getNomTable(String ip2) {
+		return "Chatwith_"+ip2;
+	}
+	
+	
+
+	    
+	//-------------------- GETTEURS & SETTEURS -----------------------------//
+
+	public static Controller getApp() {
+		return app;
+	}
+	
+	public void setApp(Controller app) {
+		BDD.app = app;
 	}
 		
-
 }
+

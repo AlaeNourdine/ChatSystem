@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+org.eclipse.jdt.launching.PREF_VM_XML=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<vmSettings defaultVM\="57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1643659739993" defaultVMConnector\="">\n    <vmType id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\n        <vm id\="1643659622495" name\="java-11-openjdk-amd64" path\="/usr/lib/jvm/java-11-openjdk-amd64"/>\n        <vm id\="1643659739993" name\="jdk-17.0.2" path\="/home/maher/Bureau/jdk-17.0.2"/>\n    </vmType>\n</vmSettings>\n

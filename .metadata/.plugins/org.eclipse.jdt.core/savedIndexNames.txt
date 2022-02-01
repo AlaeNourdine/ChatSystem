@@ -1,0 +1,6 @@
+INDEX VERSION 1.131+/home/maher/Bureau/ChatBox/.metadata/.plugins/org.eclipse.jdt.core
+915009132.index
+1616115446.index
+2917794474.index
+3518774336.index
+1536881598.index

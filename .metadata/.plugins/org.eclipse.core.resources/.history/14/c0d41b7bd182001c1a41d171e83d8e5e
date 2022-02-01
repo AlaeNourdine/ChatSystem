@@ -1,0 +1,8 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>INSA.ChatBox</groupId>
+  <artifactId>ChatBox</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>ChatBox</name>
+  <description>Creation d'un maven projet d'un système de clavardage dans le cadre du cours COO-POO de la 4A IR INSA Toulouse</description>
+</project>
